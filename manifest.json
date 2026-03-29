@@ -1,11 +1,8 @@
 {
   "manifest_version": 3,
   "name": "FedEx CED Exception Helper",
-  "version": "1.0",
-  "description": "Parses FedEx order history and provides clear action steps for Exception Codes.",
-  "action": {
-    "default_popup": "popup.html"
-  },
+  "version": "1.1",
+  "description": "In-page overlay that parses FedEx order history and provides clear action steps.",
   "permissions": [
     "storage",
     "activeTab"
@@ -17,7 +14,7 @@
     {
       "matches": ["https://fedex-ced.lightning.force.com/*"],
       "js": ["content.js"],
-      "run_at": "document_start"
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [
