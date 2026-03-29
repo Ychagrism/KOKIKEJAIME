@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "FedEx CED Exception Helper",
+  "version": "1.0",
+  "description": "Parses FedEx order history and provides clear action steps for Exception Codes.",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://fedex-ced.lightning.force.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://fedex-ced.lightning.force.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js", "Exception codes.csv"],
+      "matches": ["https://fedex-ced.lightning.force.com/*"]
+    }
+  ]
+}
