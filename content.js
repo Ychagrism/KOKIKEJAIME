@@ -82,6 +82,8 @@ async function fetchExceptionCodes() {
 fetchExceptionCodes();
 
 // --- 5. Data Processing Engine ---
+let activeTrackingNumber = null; // Track the current state
+
 window.addEventListener('message', function(event) {
     if (event.source !== window || !event.data) return;
 
@@ -91,17 +93,34 @@ window.addEventListener('message', function(event) {
     } 
     // Handle the actual XHR payload
     else if (event.data.type === 'FEDEX_XHR_INTERCEPT') {
-        uiLog('📦 [Content] Payload received. Processing...');
-        
         try {
             const rawData = JSON.parse(event.data.data);
-            if (!rawData.actions || !rawData.actions[0] || !rawData.actions[0].returnValue) return;
+            
+            // 1. Structural Validation: Does it have the Aura nested string?
+            if (!rawData.actions || !rawData.actions[0] || !rawData.actions[0].returnValue || !rawData.actions[0].returnValue.returnValue) {
+                return; // Silently ignore background polling with no data
+            }
             
             const parsedData = JSON.parse(rawData.actions[0].returnValue.returnValue);
+            const incomingTrackingNumber = parsedData.shipmentStatus?.trackingNbr;
             const scanHistory = parsedData.scanHistory || [];
-            const trackingNumber = parsedData.shipmentStatus?.trackingNbr || 'Unknown';
 
-            document.getElementById('fedex-status').innerHTML = `<strong>Tracking:</strong> ${trackingNumber}`;
+            // 2. Content Validation: Does this specific payload contain actual tracking info?
+            if (!incomingTrackingNumber || scanHistory.length === 0) {
+                // If the user hasn't loaded a track yet, or it's just a blank ping, drop it.
+                return; 
+            }
+
+            // 3. State Management: Check if this is a new search or a refresh
+            if (incomingTrackingNumber !== activeTrackingNumber) {
+                uiLog(`🔍 [Content] New tracking number detected: ${incomingTrackingNumber}`);
+                activeTrackingNumber = incomingTrackingNumber;
+            } else {
+                uiLog('🔄 [Content] Refreshing data for current tracking number.');
+            }
+
+            // --- Render the Valid Data ---
+            document.getElementById('fedex-status').innerHTML = `<strong>Tracking:</strong> ${incomingTrackingNumber}`;
             
             // Find latest exception
             let latestException = null;
@@ -154,9 +173,8 @@ window.addEventListener('message', function(event) {
                 </div>
             `}).join('');
 
-            uiLog('✅ [Content] UI updated successfully.');
-
         } catch (e) {
+            // We only log errors that happen on what looks like valid JSON, to avoid spamming the console on empty background checks.
             uiLog(`💥 [Content] Data Parse Error: ${e.message}`);
         }
     }
