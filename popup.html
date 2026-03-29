@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { width: 450px; font-family: 'Segoe UI', Tahoma, Verdana, sans-serif; padding: 15px; margin: 0; background: #f9f9fb; }
+    h2 { margin-top: 0; color: #4d148c; font-size: 18px; border-bottom: 2px solid #e0e0e0; padding-bottom: 8px;}
+    #status { margin-bottom: 15px; font-size: 14px; }
+    
+    .exception-card { 
+      background: #fff3cd; 
+      border: 1px solid #ffeeba;
+      border-left: 5px solid #ff9800; 
+      padding: 12px; 
+      margin-bottom: 15px; 
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .exception-card strong { color: #856404; }
+    .action-step { margin-top: 8px; background: #fff; padding: 8px; border-radius: 4px; border: 1px solid #ffeeba;}
+    
+    h3 { font-size: 14px; color: #333; margin-bottom: 8px; }
+    .history-list { max-height: 280px; overflow-y: auto; background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; }
+    .history-item { border-bottom: 1px solid #f0f0f0; padding: 8px 10px; font-size: 12px; line-height: 1.4; }
+    .history-item:last-child { border-bottom: none; }
+    .badge { background: #4d148c; color: white; padding: 2px 6px; border-radius: 3px; font-weight: bold; font-size: 11px; margin-right: 5px;}
+    .badge-alert { background: #d32f2f; }
+  </style>
+</head>
+<body>
+  <h2>FedEx Agent Assistant</h2>
+  <div id="status">Listening for tracking data... Open a record to begin.</div>
+  
+  <div id="exception-container" style="display:none;"></div>
+  
+  <h3>Recent Scan History</h3>
+  <div id="history-container" class="history-list">
+     <div style="padding: 10px; color: #777;">No history loaded yet.</div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
