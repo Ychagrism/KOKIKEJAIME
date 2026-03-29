@@ -57,7 +57,7 @@ uiLog('⚙️ [Content] Overlay mounted. Injecting XHR interceptor...');
 let exceptionMap = {};
 async function fetchExceptionCodes() {
     try {
-        const url = chrome.runtime.getURL("Exception codes.csv");
+        const url = chrome.runtime.getURL("Exception_codes.csv");
         const response = await fetch(url);
         const text = await response.text();
         const lines = text.split('\n');
