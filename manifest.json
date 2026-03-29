@@ -19,7 +19,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["inject.js", "Exception codes.csv"],
+      "resources": ["inject.js", "Exception_codes.csv"],
       "matches": ["https://fedex-ced.lightning.force.com/*"]
     }
   ]
