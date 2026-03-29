@@ -1,4 +1,10 @@
 (function() {
+    // Helper function to send logs directly to the UI overlay
+    function streamLog(message) {
+        window.postMessage({ type: 'FEDEX_DEBUG_LOG', data: message }, '*');
+        console.log(message); // Keep it in the native console too
+    }
+
     const XHR = XMLHttpRequest.prototype;
     const open = XHR.open;
     const send = XHR.send;
@@ -10,20 +16,18 @@
 
     XHR.send = function() {
         this.addEventListener('load', function() {
-            // Note: I stripped out the "r=63" just in case Salesforce changes that number dynamically per session. 
-            // It will still reliably catch the ApexAction.
             if (this._url && this._url.includes('aura.ApexAction.execute=1')) {
-                console.log('🚀 [FedEx Helper - Inject] Target XHR intercepted:', this._url);
+                streamLog(`🚀 [Inject] Intercepted ApexAction request.`);
                 try {
-                    const responseText = this.responseText;
-                    // Send the intercepted data to the content script
-                    window.postMessage({ type: 'FEDEX_XHR_INTERCEPT', data: responseText }, '*');
-                    console.log('✅ [FedEx Helper - Inject] Payload successfully sent to Content Script.');
+                    window.postMessage({ type: 'FEDEX_XHR_INTERCEPT', data: this.responseText }, '*');
+                    streamLog('✅ [Inject] Payload piped to overlay UI.');
                 } catch (e) {
-                    console.error('❌ [FedEx Helper - Inject] Error reading response:', e);
+                    streamLog(`❌ [Inject] Error sending payload: ${e.message}`);
                 }
             }
         });
         return send.apply(this, arguments);
     };
+    
+    streamLog('💉 [Inject] XHR Interceptor locked and loaded.');
 })();
